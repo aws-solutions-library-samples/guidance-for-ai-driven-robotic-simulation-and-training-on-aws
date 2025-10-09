@@ -1,6 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -42,6 +43,7 @@ export class IamSecretsStack extends cdk.NestedStack {
   public readonly secret: secretsmanager.Secret;
   public readonly role: iam.Role;
   public readonly instanceProfile: iam.CfnInstanceProfile;
+  public readonly bucket: s3.Bucket;
 
   constructor(scope: Construct, id: string, props: RoboticsStackProps) {
     super(scope, id, props);
@@ -56,6 +58,13 @@ export class IamSecretsStack extends cdk.NestedStack {
       }
     });
 
+    this.bucket = new s3.Bucket(this, 'S3Bucket', {
+      bucketName: `${props.projectName}-${props.environment}-${cdk.Aws.ACCOUNT_ID}-${cdk.Aws.REGION}`,
+      versioned: false,
+      publicReadAccess: false,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL
+    });
+
     this.role = new iam.Role(this, 'EC2Role', {
       roleName: `${props.projectName}-${props.environment}-ec2-role`,
       assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),
@@ -66,6 +75,7 @@ export class IamSecretsStack extends cdk.NestedStack {
     });
 
     this.secret.grantRead(this.role);
+    this.bucket.grantReadWrite(this.role);
 
     this.instanceProfile = new iam.CfnInstanceProfile(this, 'InstanceProfile', {
       instanceProfileName: `${props.projectName}-${props.environment}-ec2-profile`,
@@ -157,6 +167,16 @@ export class RoboticsStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'SecretArn', {
       value: this.iamSecretsStack.secret.secretArn,
       description: 'Secrets Manager Secret ARN'
+    });
+
+    new cdk.CfnOutput(this, 'S3BucketName', {
+      value: this.iamSecretsStack.bucket.bucketName,
+      description: 'S3 Bucket Name'
+    });
+
+    new cdk.CfnOutput(this, 'S3BucketArn', {
+      value: this.iamSecretsStack.bucket.bucketArn,
+      description: 'S3 Bucket ARN'
     });
   }
 }
