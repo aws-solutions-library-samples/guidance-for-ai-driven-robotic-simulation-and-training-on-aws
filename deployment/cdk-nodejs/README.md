@@ -6,7 +6,7 @@ This CDK application deploys a complete robotics training environment with Isaac
 
 ## Architecture
 
-The deployment creates three nested stacks:
+The deployment creates four nested stacks:
 
 ### 1. VPC Stack
 - **VPC** with configurable CIDR block (default: 10.0.0.0/16)
@@ -36,6 +36,17 @@ The deployment creates three nested stacks:
   - Configurable root volume size (default: 100GB)
   - User data script for Isaac Sim and DCV installation
 
+### 4. EKS Stack
+- **EKS Cluster** (Kubernetes v1.30) with:
+  - Public and private endpoint access
+  - CloudWatch logging enabled
+  - Deployed in private subnets
+- **Managed Node Group** with:
+  - Trainium instances (trn1.2xlarge)
+  - Amazon Linux 2023 Neuron AMI
+  - 2 nodes (min/max/desired)
+  - Deployed in private subnets
+
 ## Prerequisites
 
 - AWS CLI configured with appropriate credentials
@@ -56,7 +67,7 @@ The deployment creates three nested stacks:
 
 ### Script Parameters (Positional)
 ```bash
-./deploy-nested-stackset.sh [PROJECT_NAME] [ENVIRONMENT] [REGION] [INSTANCE_TYPE] [SSH_KEY]
+./deploy-nested-stackset.sh [PROJECT_NAME] [ENVIRONMENT] [REGION] [INSTANCE_TYPE] [SSH_KEY] [ALLOWED_CIDRS]
 ```
 
 | Parameter | Default | Description |
@@ -66,6 +77,7 @@ The deployment creates three nested stacks:
 | REGION | us-east-1 | AWS region for deployment |
 | INSTANCE_TYPE | g4dn.xlarge | EC2 instance type |
 | SSH_KEY | "" | SSH key pair name (optional) |
+| ALLOWED_CIDRS | 0.0.0.0/0 | Comma-separated CIDR blocks for SSH/DCV access |
 
 ### CDK Context Parameters
 
@@ -89,6 +101,7 @@ cdk deploy \
 | keyName | string | undefined | SSH key pair name |
 | rootVolumeSize | number | 100 | Root volume size in GB |
 | vpcCidr | string | 10.0.0.0/16 | VPC CIDR block |
+| allowedCidrBlocks | array | ["0.0.0.0/0"] | CIDR blocks allowed for SSH/DCV access |
 
 ## Instance Types & Costs
 
@@ -106,15 +119,26 @@ cdk deploy \
 
 | Volume Size | Use Case | Monthly Cost |
 |-------------|----------|--------------|
-| 100GB | Basic Isaac Sim | ~$10 |
-| 200GB | Multiple projects | ~$20 |
+| 150GB | Basic Isaac Sim (default) | ~$15 |
+| 250GB | Multiple projects | ~$25 |
 | 500GB | Large datasets | ~$50 |
 
 ## Deployment Examples
 
 ### Development Environment
 ```bash
+# Open access (default)
 ./deploy-nested-stackset.sh robotics-dev dev "us-east-1" "g4dn.xlarge" "dev-keypair"
+
+# Restrict to your IP only
+MY_IP=$(curl -s https://checkip.amazonaws.com)
+./deploy-nested-stackset.sh robotics-dev dev "us-east-1" "g4dn.xlarge" "dev-keypair" "$MY_IP/32"
+
+# Multiple CIDR blocks
+./deploy-nested-stackset.sh robotics-dev dev "us-east-1" "g4dn.xlarge" "dev-keypair" "203.0.113.0/24,198.51.100.0/24"
+
+# Custom volume size (250GB)
+./deploy-nested-stackset.sh robotics-dev dev "us-east-1" "g4dn.xlarge" "dev-keypair" "0.0.0.0/0" "250"
 ```
 
 ### Production Environment with Custom Settings
@@ -125,7 +149,8 @@ cdk deploy \
   --context instanceType="g4dn.4xlarge" \
   --context keyName="prod-keypair" \
   --context rootVolumeSize=500 \
-  --context vpcCidr="172.16.0.0/16"
+  --context vpcCidr="172.16.0.0/16" \
+  --context allowedCidrBlocks='["203.0.113.0/24","198.51.100.0/24"]'
 ```
 
 ### Multi-Region Deployment
@@ -201,6 +226,28 @@ aws s3 ls s3://$BUCKET_NAME/
 aws s3 cp s3://$BUCKET_NAME/myfile.txt ./
 ```
 
+### EKS Cluster Usage
+```bash
+# Get cluster name from stack outputs
+CLUSTER_NAME=$(aws cloudformation describe-stacks \
+  --stack-name robotics-training-dev-stack \
+  --query 'Stacks[0].Outputs[?OutputKey==`EksClusterName`].OutputValue' \
+  --output text)
+
+# Update kubeconfig
+aws eks update-kubeconfig --region us-east-1 --name $CLUSTER_NAME
+
+# Verify cluster access
+kubectl get nodes
+
+# Check node group status
+kubectl get nodes -o wide
+
+# Deploy a sample workload
+kubectl create deployment nginx --image=nginx
+kubectl expose deployment nginx --port=80 --type=LoadBalancer
+```
+
 ## Resource Naming Convention
 
 All resources follow the pattern: `{projectName}-{environment}-{resourceType}`
@@ -214,6 +261,8 @@ Examples:
 - Secret: `robotics-training-dev-password`
 - Role: `robotics-training-dev-ec2-role`
 - S3 Bucket: `robotics-training-dev-123456789012-us-east-1`
+- EKS Cluster: `robotics-training-dev-cluster`
+- EKS Node Group: `robotics-training-dev-nodegroup`
 
 ## Cleanup
 

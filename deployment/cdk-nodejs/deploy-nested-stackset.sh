@@ -9,6 +9,8 @@ ENVIRONMENT=${2:-"dev"}
 TARGET_REGIONS=${3:-"us-east-1"}
 INSTANCE_TYPE=${4:-"g4dn.xlarge"}
 KEY_NAME=${5:-""}
+ALLOWED_CIDRS=${6:-"0.0.0.0/0"}
+ROOT_VOLUME_SIZE=${7:-"150"}
 
 echo "=== Deploying Nested StackSet ==="
 echo "Project: $PROJECT_NAME"
@@ -16,6 +18,8 @@ echo "Environment: $ENVIRONMENT"
 echo "Target Regions: $TARGET_REGIONS"
 echo "Instance Type: $INSTANCE_TYPE"
 echo "SSH Key: ${KEY_NAME:-"None"}"
+echo "Allowed CIDRs: $ALLOWED_CIDRS"
+echo "Root Volume Size: ${ROOT_VOLUME_SIZE}GB"
 
 # Convert comma-separated regions to JSON array
 REGIONS_ARRAY=$(echo "$TARGET_REGIONS" | sed 's/,/","/g' | sed 's/^/["/' | sed 's/$/"]/')
@@ -44,6 +48,9 @@ done
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 CONTEXT_PARAMS="$CONTEXT_PARAMS --context accountId=$ACCOUNT_ID"
 
+# Convert comma-separated CIDRs to JSON array
+CIDRS_ARRAY=$(echo "$ALLOWED_CIDRS" | sed 's/,/","/g' | sed 's/^/["/' | sed 's/$/"]/')
+
 # Deploy nested stacks
 echo "Deploying nested stacks..."
 cdk deploy \
@@ -51,7 +58,8 @@ cdk deploy \
   --context environment="$ENVIRONMENT" \
   --context instanceType="$INSTANCE_TYPE" \
   --context keyName="$KEY_NAME" \
-  --context rootVolumeSize=250 \
+  --context rootVolumeSize=$ROOT_VOLUME_SIZE \
+  --context allowedCidrBlocks="$CIDRS_ARRAY" \
   --require-approval never
 
 echo ""

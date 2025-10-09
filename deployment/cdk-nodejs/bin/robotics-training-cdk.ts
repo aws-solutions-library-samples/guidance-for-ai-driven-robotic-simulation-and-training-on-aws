@@ -11,8 +11,10 @@ const environment = app.node.tryGetContext('environment') || 'dev';
 const region = app.node.tryGetContext('region') || 'us-east-1';
 const instanceType = app.node.tryGetContext('instanceType') || 'g4dn.xlarge';
 const keyName = app.node.tryGetContext('keyName');
-const rootVolumeSize = Number(app.node.tryGetContext('rootVolumeSize')) || 100;
+const rootVolumeSize = Number(app.node.tryGetContext('rootVolumeSize')) || 150;
 const vpcCidr = app.node.tryGetContext('vpcCidr') || '10.0.0.0/16';
+const allowedCidrBlocksContext = app.node.tryGetContext('allowedCidrBlocks');
+const allowedCidrBlocks = allowedCidrBlocksContext ? JSON.parse(allowedCidrBlocksContext) : undefined;
 
 // Create robotics stack with nested stacks
 const roboticsStack = new RoboticsStack(app, `${projectName}-${environment}-stack`, {
@@ -24,5 +26,6 @@ const roboticsStack = new RoboticsStack(app, `${projectName}-${environment}-stac
   instanceType,
   keyName,
   rootVolumeSize,
-  vpcCidr
+  vpcCidr,
+  allowedCidrBlocks
 });

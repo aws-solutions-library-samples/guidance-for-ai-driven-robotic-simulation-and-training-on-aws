@@ -6,6 +6,7 @@ import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Construct } from 'constructs';
+import { EksStack } from './eks-stack';
 
 export interface RoboticsStackProps extends cdk.StackProps {
   projectName: string;
@@ -14,6 +15,7 @@ export interface RoboticsStackProps extends cdk.StackProps {
   keyName?: string;
   rootVolumeSize?: number;
   vpcCidr?: string;
+  allowedCidrBlocks?: string[];
 }
 
 export class VpcStack extends cdk.NestedStack {
@@ -114,8 +116,11 @@ export class EC2Stack extends cdk.NestedStack {
       allowAllOutbound: true
     });
 
-    this.securityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(22), 'SSH access');
-    this.securityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(8443), 'DCV access');
+    const allowedCidrs = props.allowedCidrBlocks || ['0.0.0.0/0'];
+    allowedCidrs.forEach((cidr, index) => {
+      this.securityGroup.addIngressRule(ec2.Peer.ipv4(cidr), ec2.Port.tcp(22), `SSH access from ${cidr}`);
+      this.securityGroup.addIngressRule(ec2.Peer.ipv4(cidr), ec2.Port.tcp(8443), `DCV access from ${cidr}`);
+    });
 
     this.instance = new ec2.Instance(this, 'Instance', {
       instanceType: new ec2.InstanceType(props.instanceType || 'g4dn.xlarge'),
@@ -142,6 +147,7 @@ export class RoboticsStack extends cdk.Stack {
   public readonly vpcStack: VpcStack;
   public readonly iamSecretsStack: IamSecretsStack;
   public readonly ec2Stack: EC2Stack;
+  public readonly eksStack: EksStack;
 
   constructor(scope: Construct, id: string, props: RoboticsStackProps) {
     super(scope, id, props);
@@ -155,6 +161,12 @@ export class RoboticsStack extends cdk.Stack {
       publicSubnets: this.vpcStack.publicSubnets,
       secret: this.iamSecretsStack.secret,
       role: this.iamSecretsStack.role
+    });
+
+    this.eksStack = new EksStack(this, 'EksStack', {
+      ...props,
+      vpc: this.vpcStack.vpc,
+      privateSubnets: this.vpcStack.privateSubnets
     });
 
     new cdk.CfnOutput(this, 'VpcId', {
@@ -185,6 +197,16 @@ export class RoboticsStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'S3BucketArn', {
       value: this.iamSecretsStack.bucket.bucketArn,
       description: 'S3 Bucket ARN'
+    });
+
+    new cdk.CfnOutput(this, 'EksClusterName', {
+      value: this.eksStack.cluster.clusterName,
+      description: 'EKS Cluster Name'
+    });
+
+    new cdk.CfnOutput(this, 'EksClusterEndpoint', {
+      value: this.eksStack.cluster.clusterEndpoint,
+      description: 'EKS Cluster Endpoint'
     });
   }
 }
