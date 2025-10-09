@@ -59,7 +59,7 @@ export class EksStack extends cdk.NestedStack {
     this.nodeGroup = this.cluster.addNodegroupCapacity('TrainiumNodeGroup', {
       nodegroupName: `${props.projectName}-${props.environment}-nodegroup`,
       instanceTypes: [new ec2.InstanceType('trn1.2xlarge')],
-      amiType: eks.NodegroupAmiType.AL2_X86_64,
+      amiType: eks.NodegroupAmiType.AL2023_X86_64_NEURON,
       nodeRole: nodeRole,
       subnets: { subnets: props.privateSubnets },
       minSize: 2,
