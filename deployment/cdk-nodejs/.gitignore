@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+*.log
+npm-debug.log*
+package-lock.json
+
+# CDK
+cdk.out/
+.cdk.staging/
+cdk.context.json
+cdk.context.json.backup
+
+# Compiled output
+*.js
+*.js.map
+*.d.ts
+dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Test
+coverage/
+.nyc_output/
+
+# Temporary files
+*.tmp
+*.temp
