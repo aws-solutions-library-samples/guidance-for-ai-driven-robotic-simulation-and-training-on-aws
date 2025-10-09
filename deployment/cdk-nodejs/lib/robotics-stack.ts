@@ -6,7 +6,7 @@ import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Construct } from 'constructs';
-import { EksStack } from './eks-stack';
+// import { EksStack } from './eks-stack';
 
 export interface RoboticsStackProps extends cdk.StackProps {
   projectName: string;
@@ -147,7 +147,7 @@ export class RoboticsStack extends cdk.Stack {
   public readonly vpcStack: VpcStack;
   public readonly iamSecretsStack: IamSecretsStack;
   public readonly ec2Stack: EC2Stack;
-  public readonly eksStack: EksStack;
+  // public readonly eksStack: EksStack;
 
   constructor(scope: Construct, id: string, props: RoboticsStackProps) {
     super(scope, id, props);
@@ -163,11 +163,11 @@ export class RoboticsStack extends cdk.Stack {
       role: this.iamSecretsStack.role
     });
 
-    this.eksStack = new EksStack(this, 'EksStack', {
-      ...props,
-      vpc: this.vpcStack.vpc,
-      privateSubnets: this.vpcStack.privateSubnets
-    });
+    // this.eksStack = new EksStack(this, 'EksStack', {
+    //   ...props,
+    //   vpc: this.vpcStack.vpc,
+    //   privateSubnets: this.vpcStack.privateSubnets
+    // });
 
     new cdk.CfnOutput(this, 'VpcId', {
       value: this.vpcStack.vpc.vpcId,
@@ -199,14 +199,14 @@ export class RoboticsStack extends cdk.Stack {
       description: 'S3 Bucket ARN'
     });
 
-    new cdk.CfnOutput(this, 'EksClusterName', {
-      value: this.eksStack.cluster.clusterName,
-      description: 'EKS Cluster Name'
-    });
+    // new cdk.CfnOutput(this, 'EksClusterName', {
+    //   value: this.eksStack.cluster.clusterName,
+    //   description: 'EKS Cluster Name'
+    // });
 
-    new cdk.CfnOutput(this, 'EksClusterEndpoint', {
-      value: this.eksStack.cluster.clusterEndpoint,
-      description: 'EKS Cluster Endpoint'
-    });
+    // new cdk.CfnOutput(this, 'EksClusterEndpoint', {
+    //   value: this.eksStack.cluster.clusterEndpoint,
+    //   description: 'EKS Cluster Endpoint'
+    // });
   }
 }
