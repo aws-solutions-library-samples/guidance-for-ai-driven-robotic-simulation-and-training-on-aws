@@ -18,24 +18,32 @@ export interface RoboticsStackProps extends cdk.StackProps {
 
 export class VpcStack extends cdk.NestedStack {
   public readonly vpc: ec2.Vpc;
-  public readonly publicSubnet: ec2.ISubnet;
+  public readonly publicSubnets: ec2.ISubnet[];
+  public readonly privateSubnets: ec2.ISubnet[];
 
   constructor(scope: Construct, id: string, props: RoboticsStackProps) {
     super(scope, id, props);
 
     this.vpc = new ec2.Vpc(this, 'VPC', {
       ipAddresses: ec2.IpAddresses.cidr(props.vpcCidr || '10.0.0.0/16'),
-      maxAzs: 1,
+      maxAzs: 2,
+      natGateways: 1,
       subnetConfiguration: [
         {
           cidrMask: 24,
           name: 'Public',
           subnetType: ec2.SubnetType.PUBLIC,
+        },
+        {
+          cidrMask: 24,
+          name: 'Private',
+          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
         }
       ]
     });
 
-    this.publicSubnet = this.vpc.publicSubnets[0];
+    this.publicSubnets = this.vpc.publicSubnets;
+    this.privateSubnets = this.vpc.privateSubnets;
   }
 }
 
@@ -90,7 +98,7 @@ export class EC2Stack extends cdk.NestedStack {
 
   constructor(scope: Construct, id: string, props: RoboticsStackProps & {
     vpc: ec2.Vpc;
-    subnet: ec2.ISubnet;
+    publicSubnets: ec2.ISubnet[];
     secret: secretsmanager.Secret;
     role: iam.Role;
   }) {
@@ -115,7 +123,7 @@ export class EC2Stack extends cdk.NestedStack {
         '/aws/service/deeplearning/ami/x86_64/base-oss-nvidia-driver-gpu-ubuntu-24.04/latest/ami-id'
       ),
       vpc: props.vpc,
-      vpcSubnets: { subnets: [props.subnet] },
+      vpcSubnets: { subnets: [props.publicSubnets[0]] },
       securityGroup: this.securityGroup,
       role: props.role,
       keyName: props.keyName,
@@ -144,7 +152,7 @@ export class RoboticsStack extends cdk.Stack {
     this.ec2Stack = new EC2Stack(this, 'EC2Stack', {
       ...props,
       vpc: this.vpcStack.vpc,
-      subnet: this.vpcStack.publicSubnet,
+      publicSubnets: this.vpcStack.publicSubnets,
       secret: this.iamSecretsStack.secret,
       role: this.iamSecretsStack.role
     });

@@ -10,9 +10,11 @@ The deployment creates three nested stacks:
 
 ### 1. VPC Stack
 - **VPC** with configurable CIDR block (default: 10.0.0.0/16)
-- **Public Subnet** in single AZ
+- **2 Public Subnets** across 2 Availability Zones
+- **2 Private Subnets** across 2 Availability Zones
+- **1 NAT Gateway** in first public subnet for private subnet internet access
 - **Internet Gateway** for public internet access
-- **Route Tables** for public subnet routing
+- **Route Tables** for public and private subnet routing
 
 ### 2. IAM & Secrets Stack
 - **IAM Role** with permissions for:
