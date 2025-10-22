@@ -1,15 +1,10 @@
 # Guidance for Using Amazon Bedrock FM and AWS Trainium to Build AI Assisted Robot Learning and Training
 
-The Guidance title should be consistent with the title established first in Alchemy.
-
-**Example:** *Guidance for Product Substitutions on AWS*
-
-This title correlates exactly to the Guidance it’s linked to, including its corresponding sample code repository. 
+This guidance showcases a robotic learning system (Imitation Learning) that combines the intelligence of foundation models with the precision of ML and mathematical algorithms, all accelerated by AWS Trainium/GPU and managed through modern cloud-native technologies. This guidance also enables developers to train (reinforcement learning) robotic agents using NVIDIA Isaac Sim on Amazon EKS with LLM-generated reward functions via Bedrock, then automatically deploy trained models to physical robots through AWS IoT services.
 
 
-## Table of Contents (required)
 
-List the top-level sections of the README template, along with a hyperlink to the specific section.
+## Table of Contents 
 
 ### Required
 
