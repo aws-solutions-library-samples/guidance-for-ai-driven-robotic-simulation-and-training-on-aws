@@ -1,4 +1,4 @@
-# Guidance Title (required)
+# Guidance for Using Amazon Bedrock FM and AWS Trainium to Build AI Assisted Robot Learning and Training
 
 The Guidance title should be consistent with the title established first in Alchemy.
 
