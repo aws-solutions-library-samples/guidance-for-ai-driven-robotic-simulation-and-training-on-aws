@@ -149,15 +149,16 @@ Deployment steps must be numbered, comprehensive, and usable to customers at any
 
 ## Running the Guidance (required)
 
-<Provide instructions to run the Guidance with the sample data or input provided, and interpret the output received.> 
+To make the data collection works better - the robot policy has been optimized through reinforcement learning to perform the T-bar pushing task more effectively, leading to higher success rates and more efficient data collection.
 
-This section should include:
+Iterative Approach:
+Run RL fine-tune for 30 minutes
 
-* Guidance inputs
-* Commands to run
-* Expected output (provide screenshot if possible)
-* Output description
+Test with data collection - see if performance improved
 
+If still poor, continue RL training for another 30 minutes
+
+Repeat until satisfied
 
 
 ## Next Steps (required)
