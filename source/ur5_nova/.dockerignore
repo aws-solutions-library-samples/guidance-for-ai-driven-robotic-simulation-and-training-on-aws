@@ -1,0 +1,16 @@
+# Reduce build context size
+.git
+**/__pycache__/
+**/*.pyc
+build/
+install/
+log/
+logs/
+.colcon/
+# Large datasets and videos
+training_data/
+Scripts/dataset/
+**/*.mp4
+**/*.parquet
+**/*.jsonl
+
