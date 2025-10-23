@@ -4,12 +4,13 @@
 
 set -e
 
+MY_IP=$(curl -s https://checkip.amazonaws.com)
 PROJECT_NAME=${1:-"robotics-training"}
 ENVIRONMENT=${2:-"dev"}
 TARGET_REGIONS=${3:-"us-east-1"}
 INSTANCE_TYPE=${4:-"g4dn.xlarge"}
 KEY_NAME=${5:-""}
-ALLOWED_CIDRS=${6:-"0.0.0.0/0"}
+ALLOWED_CIDRS=${6:-"$MY_IP/32"}
 ROOT_VOLUME_SIZE=${7:-"150"}
 
 echo "=== Deploying Nested StackSet ==="

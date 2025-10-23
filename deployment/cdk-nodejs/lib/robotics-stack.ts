@@ -116,7 +116,7 @@ export class EC2Stack extends cdk.NestedStack {
       allowAllOutbound: true
     });
 
-    const allowedCidrs = props.allowedCidrBlocks || ['0.0.0.0/0'];
+    const allowedCidrs = props.allowedCidrBlocks || [];
     allowedCidrs.forEach((cidr, index) => {
       this.securityGroup.addIngressRule(ec2.Peer.ipv4(cidr), ec2.Port.tcp(22), `SSH access from ${cidr}`);
       this.securityGroup.addIngressRule(ec2.Peer.ipv4(cidr), ec2.Port.tcp(8443), `DCV access from ${cidr}`);
