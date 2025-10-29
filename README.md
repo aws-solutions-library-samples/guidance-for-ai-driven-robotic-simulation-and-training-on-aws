@@ -6,16 +6,16 @@ This guidance showcases a robotic learning system (Imitation Learning) that comb
 
 ### Required
 
-1. [Overview](#overview-required)
+1. [Overview](#overview)
     - [Cost](#cost)
-2. [Prerequisites](#prerequisites-required)
-    - [Operating System](#operating-system-required)
-3. [Deployment Steps](#deployment-steps-required)
-4. [Deployment Validation](#deployment-validation-required)
-5. [Running the Guidance](#running-the-guidance-required)
-6. [Next Steps](#next-steps-required)
-7. [Cleanup](#cleanup-required)
-8. [Notices](#notices-optional)
+2. [Prerequisites](#prerequisites)
+    - [Operating System](#operating-system)
+3. [Deployment Steps](#deployment-steps)
+4. [Deployment Validation](#deployment-validation)
+5. [Running the Guidance](#running-the-guidance)
+6. [Next Steps](#next-steps)
+7. [Cleanup](#cleanup)
+8. [Notices](#notices)
 
 ***Optional***
 
@@ -23,7 +23,7 @@ This guidance showcases a robotic learning system (Imitation Learning) that comb
 9. [Revisions](#revisions-optional)
 10. [Authors](#authors-optional)
 
-## Overview (required)
+## Overview 
 
 This guidance demonstrates how to build an AI-assisted robotic learning system that combines foundation models from Amazon Bedrock with reinforcement learning capabilities accelerated by AWS Trainium. The system enables robots to learn complex manipulation tasks through imitation learning and reinforcement learning, with automatic deployment to physical robots via AWS IoT services.
 
@@ -44,13 +44,13 @@ Traditional robotic training requires extensive manual programming and domain ex
 4. **Infrastructure**: AWS Trainium/GPU instances accelerate training, managed through Amazon EKS
 5. **Deployment**: Trained models are deployed to physical robots via AWS IoT services
 
-### Cost ( required )
+### Cost 
 
 _You are responsible for the cost of the AWS services used while running this Guidance. As of December 2024, the cost for running this Guidance with the default settings in the US East (N. Virginia) Region is approximately $801.20 per month for processing 100 training episodes with continuous robot learning._
 
 _We recommend creating a [Budget](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html) through [AWS Cost Explorer](https://aws.amazon.com/aws-cost-management/aws-cost-explorer/) to help manage costs. Prices are subject to change. For full details, refer to the pricing webpage for each AWS service used in this Guidance._
 
-### Sample Cost Table ( required )
+### Sample Cost Table 
 
 The following table provides a sample cost breakdown for deploying this Guidance with the default parameters in the US East (N. Virginia) Region for one month.
 
@@ -66,9 +66,9 @@ The following table provides a sample cost breakdown for deploying this Guidance
 | AWS IoT Core | 50,000 messages for robot deployment | $ 2.50 |
 | **Total** | | **$ 801.20** |
 
-## Prerequisites (required)
+## Prerequisites 
 
-### Operating System (required)
+### Operating System 
 
 These deployment instructions are optimized to best work on **Ubuntu 24.04 LTS with NVIDIA GPU support**. Deployment on other OS may require additional steps.
 
@@ -104,8 +104,7 @@ sudo apt-get update && sudo apt-get install -y nvidia-docker2
 sudo systemctl restart docker
 ```
 
-### Third-party tools (If applicable)
-
+### Third-party tools 
 **Required third-party tools:**
 - **NVIDIA Isaac Sim 4.5.0**: Physics simulation environment for robot training
 - **LeRobot**: Robotics learning framework for policy training
@@ -114,7 +113,7 @@ sudo systemctl restart docker
 - **ROS 2 Jazzy**: Robot Operating System for robot control
 - **MoveIt**: Motion planning framework for robotic arms
 
-### AWS account requirements (If applicable)
+### AWS account requirements 
 
 **Required AWS account setup:**
 - **Amazon Bedrock access**: Enable Claude 3 model access in your AWS account
@@ -147,7 +146,7 @@ cdk bootstrap aws://123456789012/us-east-1
 
 **Note**: Replace `ACCOUNT-NUMBER` with your AWS account ID and `REGION` with your target AWS region.
 
-### Service limits  (if applicable)
+### Service limits  
 
 **Critical service limits that may require increases:**
 
@@ -164,7 +163,7 @@ cdk bootstrap aws://123456789012/us-east-1
 
 - **S3 Storage**: Default limits are typically sufficient for this guidance
 
-### Supported Regions (if applicable)
+### Supported Regions 
 
 **Recommended regions** (all required services available):
 - **us-east-1** (N. Virginia) - Recommended for best service availability
@@ -178,7 +177,7 @@ cdk bootstrap aws://123456789012/us-east-1
 
 **Note**: Verify Trainium instance availability in your target region before deployment.
 
-## Deployment Steps (required)
+## Deployment Steps 
 
 1. Clone the repository using command:
    ```bash
@@ -238,7 +237,7 @@ cdk bootstrap aws://123456789012/us-east-1
     # Wait until you see "Phase 2 completed"
     ```
 
-## Deployment Validation  (required)
+## Deployment Validation  
 
 **Validate successful deployment:**
 
@@ -279,7 +278,7 @@ cdk bootstrap aws://123456789012/us-east-1
    ```
    Expected: Bucket with robotics prefix should be listed
 
-## Running the Guidance (required)
+## Running the Guidance 
 
 **Step 1: Access the Isaac Sim Environment**
 1. Connect to the EC2 instance via DCV at `https://<INSTANCE_PUBLIC_IP>:8443`
@@ -333,7 +332,7 @@ python3 Scripts/RL_Finetune.py
 - Success rate and accuracy displayed in real-time
 - Nova Pro provides intelligent observations of robot behavior
 
-## Next Steps (required)
+## Next Steps
 
 **Customization and Enhancement Options:**
 
@@ -367,7 +366,7 @@ python3 Scripts/RL_Finetune.py
    - Add monitoring and alerting with Amazon CloudWatch
    - Set up automated retraining pipelines with Amazon EventBridge
 
-## Cleanup (required)
+## Cleanup 
 
 **To completely remove all resources created by this Guidance:**
 
@@ -404,7 +403,7 @@ python3 Scripts/RL_Finetune.py
    aws ec2 describe-instances --filters "Name=tag:Name,Values=*robotics*" --query 'Reservations[*].Instances[*].[InstanceId,State.Name]' --output table
    ```
 
-5. **Manual cleanup (if needed):**
+5. **Manual cleanup:**
    - **EKS clusters**: If EKS stack deletion fails, manually delete from console
    - **VPC resources**: Delete any remaining ENIs or security groups
    - **IAM roles**: Remove any custom IAM roles if they weren't deleted
@@ -414,7 +413,7 @@ python3 Scripts/RL_Finetune.py
 
 ## FAQ, known issues, additional considerations, and limitations (optional)
 
-**Known issues (optional)**
+**Known issues**
 
 1. **Isaac Sim Installation Timeout:**
    - **Issue**: Isaac Sim download may timeout on slower connections
@@ -443,7 +442,7 @@ python3 Scripts/RL_Finetune.py
    - **Issue**: Access denied to Claude 3 models
    - **Resolution**: Request model access in Bedrock console before deployment
 
-**Additional considerations (if applicable)**
+**Additional considerations**
 
 - **This Guidance creates EC2 instances that are billed per hour while running, including during idle time**
 - **Trainium instances (trn1.2xlarge) are premium instances with higher hourly costs**
@@ -462,13 +461,13 @@ python3 Scripts/RL_Finetune.py
 
 *For any feedback, questions, or suggestions, please use the issues tab under this repo.*
 
-## Revisions (optional)
+## Revisions 
 
 Document all notable changes to this project.
 
 Consider formatting this section based on Keep a Changelog, and adhering to Semantic Versioning.
 
-## Notices ( required )
+## Notices 
 
 *Customers are responsible for making their own independent assessment of the information in this Guidance. This Guidance: (a) is for informational purposes only, (b) represents AWS current product offerings and practices, which are subject to change without notice, and (c) does not create any commitments or assurances from AWS and its affiliates, suppliers or licensors. AWS products or services are provided "as is" without warranties, representations, or conditions of any kind, whether express or implied. AWS responsibilities and liabilities to its customers are controlled by AWS agreements, and this Guidance is not part of, nor does it modify, any agreement between AWS and its customers.*
 
