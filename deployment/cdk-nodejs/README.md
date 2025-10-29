@@ -77,7 +77,7 @@ The deployment creates four nested stacks:
 | REGION | us-east-1 | AWS region for deployment |
 | INSTANCE_TYPE | g4dn.xlarge | EC2 instance type |
 | SSH_KEY | "" | SSH key pair name (optional) |
-| ALLOWED_CIDRS | 0.0.0.0/0 | Comma-separated CIDR blocks for SSH/DCV access |
+| ALLOWED_CIDRS | IP | Comma-separated CIDR blocks for SSH/DCV access |
 
 ### CDK Context Parameters
 
@@ -216,14 +216,15 @@ BUCKET_NAME=$(aws cloudformation describe-stacks \
   --query 'Stacks[0].Outputs[?OutputKey==`S3BucketName`].OutputValue' \
   --output text)
 
-# Upload files to S3
-aws s3 cp myfile.txt s3://$BUCKET_NAME/
+# Upload source files to S3
+aws s3 cp ../../source/ur5_nova s3://$BUCKET_NAME/ur5_nova
 
 # List bucket contents
 aws s3 ls s3://$BUCKET_NAME/
 
-# Download files from S3
-aws s3 cp s3://$BUCKET_NAME/myfile.txt ./
+# download sorce files from s3
+aws s3 sync s3://$BUCKET_NAME/ur5_nova /home/ubuntu/ur5_nova
+
 ```
 
 ### EKS Cluster Usage

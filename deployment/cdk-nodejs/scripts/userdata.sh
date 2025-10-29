@@ -157,13 +157,13 @@ if [ "$(cat /var/lib/cloud/instance/installation_phase)" == "Phase 1" ]; then
     mkdir -p /home/ubuntu/isaacsim
     cd /home/ubuntu/isaacsim
     echo "Downloading Isaac Sim..."
-    wget https://download.isaacsim.omniverse.nvidia.com/isaac-sim-standalone-5.0.0-linux-x86_64.zip
+    wget https://download.isaacsim.omniverse.nvidia.com/isaac-sim-standalone-5.1.0-linux-x86_64.zip
     
     echo "Unzipping Isaac Sim..."
-    unzip -q isaac-sim-standalone-5.0.0-linux-x86_64.zip
+    unzip -q isaac-sim-standalone-5.1.0-linux-x86_64.zip
     
     # Clean up zip file to save space
-    rm isaac-sim-standalone-5.0.0-linux-x86_64.zip
+    rm isaac-sim-standalone-5.1.0-linux-x86_64.zip
     
     # Set proper ownership
     chown -R ubuntu:ubuntu /home/ubuntu/isaacsim
@@ -182,6 +182,11 @@ if [ "$(cat /var/lib/cloud/instance/installation_phase)" == "Phase 1" ]; then
     
     # Set password from Secrets Manager
     set_password
+
+    # copy/sync the Source files from S3 bucket
+    mkdir -p /home/ubuntu/ur5_nova
+    aws s3 sync s3://${bucket_name}/source/ur5_nova /home/ubuntu/ur5_nova
+    chown -R ubuntu:ubuntu /home/ubuntu/ur5_nova
     
     # Remove startup script
     rm /var/lib/cloud/scripts/per-boot/finish-setup.sh

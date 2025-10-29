@@ -8,10 +8,10 @@ MY_IP=$(curl -s https://checkip.amazonaws.com)
 PROJECT_NAME=${1:-"robotics-training"}
 ENVIRONMENT=${2:-"dev"}
 TARGET_REGIONS=${3:-"us-east-1"}
-INSTANCE_TYPE=${4:-"g4dn.xlarge"}
+INSTANCE_TYPE=${4:-"g4dn.2xlarge"}
 KEY_NAME=${5:-""}
 ALLOWED_CIDRS=${6:-"$MY_IP/32"}
-ROOT_VOLUME_SIZE=${7:-"150"}
+ROOT_VOLUME_SIZE=${7:-"250"}
 
 echo "=== Deploying Nested StackSet ==="
 echo "Project: $PROJECT_NAME"
@@ -63,11 +63,24 @@ cdk deploy \
   --context allowedCidrBlocks="$CIDRS_ARRAY" \
   --require-approval never
 
+
+  # Capture in bash variable
+S3_BUCKET_NAME=$(aws cloudformation describe-stacks \
+  --stack-name $PROJECT_NAME-$ENVIRONMENT-stack  \
+  --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" \
+  --output text)
+aws s3 sync ../../source/ur5_nova s3://$S3_BUCKET_NAME/source/ur5_nova
+
+
+# Use the variable
+# aws s3 sync ../source/ur5_nova s3://$S3_BUCKET_NAME/
+
 echo ""
 echo "=== Deployment Complete ==="
 echo "Stack Name: $PROJECT_NAME-$ENVIRONMENT-stack"
 echo "Instance Type: $INSTANCE_TYPE"
 echo "SSH Key: $KEY_NAME"
+echo "Bucket Name: $S3_BUCKET_NAME"
 echo ""
 echo "Get instance details:"
 echo "aws cloudformation describe-stacks --stack-name $PROJECT_NAME-$ENVIRONMENT-stack --query 'Stacks[0].Outputs'"

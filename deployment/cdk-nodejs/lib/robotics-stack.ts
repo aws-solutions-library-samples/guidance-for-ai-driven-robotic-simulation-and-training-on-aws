@@ -102,13 +102,14 @@ export class EC2Stack extends cdk.NestedStack {
     vpc: ec2.Vpc;
     publicSubnets: ec2.ISubnet[];
     secret: secretsmanager.Secret;
+    bucket: s3.Bucket;
     role: iam.Role;
   }) {
     super(scope, id, props);
 
     const scriptPath = path.join(__dirname, '..', 'scripts', 'userdata.sh');
     const userDataScript = fs.readFileSync(scriptPath, 'utf8');
-    const templatedUserData = userDataScript.replace(/\$\{secret_name\}/g, props.secret.secretName);
+    const templatedUserData = userDataScript.replace(/\$\{secret_name\}/g, props.secret.secretName).replace(/\$\{bucket_name\}/g, props.bucket.bucketName);
 
     this.securityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
       vpc: props.vpc,
@@ -160,6 +161,7 @@ export class RoboticsStack extends cdk.Stack {
       vpc: this.vpcStack.vpc,
       publicSubnets: this.vpcStack.publicSubnets,
       secret: this.iamSecretsStack.secret,
+      bucket: this.iamSecretsStack.bucket,
       role: this.iamSecretsStack.role
     });
 
