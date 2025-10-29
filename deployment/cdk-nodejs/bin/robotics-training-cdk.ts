@@ -18,6 +18,7 @@ const allowedCidrBlocks = allowedCidrBlocksContext ? JSON.parse(allowedCidrBlock
 
 // Create robotics stack with nested stacks
 const roboticsStack = new RoboticsStack(app, `${projectName}-${environment}-stack`, {
+  description: 'This stack deploys resources required for AI assisted robot training guidance solution SO9621',
   env: {
     region: region,
   },
