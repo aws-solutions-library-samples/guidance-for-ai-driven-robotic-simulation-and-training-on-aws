@@ -24,7 +24,7 @@ import os, time, threading
 from pathlib import Path
 
 
-#os.environ['HOME'] + "/ur5_push_T-main/pushT.usd"
+#os.environ['HOME'] + "/ur5_nova/pushT.usd"
 
 USD_PATH = os.getenv("SCENE_USD_PATH", os.environ['HOME'] + "/ur5_nova/pushT.usd")
 HEADLESS = os.getenv("HEADLESS", "0").lower() in ("1","true","yes")
@@ -1280,7 +1280,7 @@ import omni  # noqa: E402
 stage_opened = False
 try:
     usd_ctx = omni.usd.get_context()
-    usd_path = os.environ['HOME'] + "/ur5_push_T-main/pushT.usd"
+    usd_path = os.environ['HOME'] + "/ur5_nova/pushT.usd"
 
     if usd_ctx.get_stage() is None:
         usd_ctx.open_stage(usd_path)
@@ -2185,7 +2185,7 @@ def _define_ros_and_policy_classes():
             self.joy_commands.buttons = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             self.timer = self.create_timer(1/self.hz, self.timer_callback)
 
-            self.initial_image = cv2.imread(os.environ['HOME'] + "/ur5_push_T-main/images/stand_top_plane.png")
+            self.initial_image = cv2.imread(os.environ['HOME'] + "/ur5_nova/images/stand_top_plane.png")
             self.initial_image = cv2.rotate(self.initial_image, cv2.ROTATE_90_COUNTERCLOCKWISE)
             self.pub_img = self.create_publisher(Image, '/pushT_image', 10)
             self.tool_radius = 10
@@ -2197,7 +2197,7 @@ def _define_ros_and_policy_classes():
             self.OBW = int(30/self.scale)
             self.radius = int(10/self.scale)
             self.Tbar_region = np.zeros((self.initial_image.shape[0], self.initial_image.shape[1]), np.uint8)
-            self.T_image = cv2.imread(os.environ['HOME'] + "/ur5_push_T-main/images/stand_top_plane_filled.png")
+            self.T_image = cv2.imread(os.environ['HOME'] + "/ur5_nova/images/stand_top_plane_filled.png")
             self.T_image = cv2.rotate(self.T_image, cv2.ROTATE_90_COUNTERCLOCKWISE)
             img_gray = cv2.cvtColor(self.T_image, cv2.COLOR_BGR2GRAY)
             thr, img_th = cv2.threshold(img_gray, 100, 255, cv2.THRESH_BINARY)
@@ -2388,7 +2388,7 @@ def _define_ros_and_policy_classes():
         def reset_simulation(self):
             global tool_pose_xy, tbar_pose_xyw, rb_states, rb_images, rb_actions, rb_rewards, rb_dones, start_buffer_index
             try:
-                stage = Usd.Stage.Open("~/ur5_push_T-main/pushT.usd", load=Usd.Stage.LoadAll)
+                stage = Usd.Stage.Open("~/ur5_nova/pushT.usd", load=Usd.Stage.LoadAll)
                 if not stage:
                     print("\033[31mError: USD scene could not be opened.\033[0m")
                     return

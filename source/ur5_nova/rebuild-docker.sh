@@ -71,7 +71,7 @@ if [ $? -eq 0 ]; then
     echo -e "${GREEN}🎉 You can now run:${NC}"
     echo ""
     echo -e "   ${BLUE}docker run --rm -it --net=host \\${NC}"
-    echo -e "   ${BLUE}  -v ~/ur5_push_T-main:/ws \\${NC}"
+    echo -e "   ${BLUE}  -v ~/ur5_nova:/ws \\${NC}"
     echo -e "   ${BLUE}  ur5_push_t:humble-fixed \\${NC}"
     echo -e "   ${BLUE}  python3 /ws/Scripts/data_collection_Model.py${NC}"
     echo ""

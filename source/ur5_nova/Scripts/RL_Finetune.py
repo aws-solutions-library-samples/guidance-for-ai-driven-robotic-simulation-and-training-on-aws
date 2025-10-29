@@ -63,7 +63,7 @@ def resolve_pretrained_model_path() -> Path:
     if ws_path.exists():
         print(f"\033[36m[RL Finetune][Model Path] Using host-mounted pretrained dir: {ws_path}\033[0m")
         return ws_path
-    host_fallback = Path(os.path.expanduser("~/ur5_push_T-main/Scripts/pretrained_model"))
+    host_fallback = Path(os.path.expanduser("~/ur5_nova/Scripts/pretrained_model"))
     if host_fallback.exists():
         print(f"\033[36m[RL Finetune][Model Path] Using fallback local pretrained dir: {host_fallback}\033[0m")
         return host_fallback
@@ -112,7 +112,7 @@ LATEST_CKPT_NAME = "last_checkpoint.pt"
 
 # Host finetune directory (for mirroring latest checkpoint)
 default_host_finetune_dir = \
-    "/ws/Scripts/rl_finetune" if os.path.exists("/ws/Scripts") else str(Path("~/ur5_push_T-main/Scripts/rl_finetune").expanduser())
+    "/ws/Scripts/rl_finetune" if os.path.exists("/ws/Scripts") else str(Path("~/ur5_nova/Scripts/rl_finetune").expanduser())
 host_finetune_dir = Path(os.getenv("HOST_FINETUNE_DIR", default_host_finetune_dir)).expanduser()
 try:
     host_finetune_dir.mkdir(parents=True, exist_ok=True)
@@ -473,7 +473,7 @@ class Action_Publisher(Node):
         # image of a T shape on the table (container-aware with env override)
         images_dir = os.getenv('IMAGES_DIR', 
                                "/ws/images" if os.path.exists("/ws/images") 
-                               else os.environ['HOME'] + "/ur5_push_T-main/images")
+                               else os.environ['HOME'] + "/ur5_nova/images")
         self.initial_image = cv2.imread(os.path.join(images_dir, "stand_top_plane.png"))
         if self.initial_image is None:
             raise FileNotFoundError(f"stand_top_plane.png not found in {images_dir}")

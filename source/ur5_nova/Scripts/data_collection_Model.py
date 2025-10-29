@@ -57,7 +57,7 @@ def resolve_pretrained_model_path() -> Path:
     if ws_path.exists():
         print(f"\033[36m[Model Path] Using host-mounted pretrained dir: {ws_path}\033[0m")
         return ws_path
-    host_fallback = Path(os.path.expanduser("~/ur5_push_T-main/Scripts/pretrained_model"))
+    host_fallback = Path(os.path.expanduser("~/ur5_nova/Scripts/pretrained_model"))
     if host_fallback.exists():
         print(f"\033[36m[Model Path] Using fallback local pretrained dir: {host_fallback}\033[0m")
         return host_fallback
@@ -70,7 +70,7 @@ os.environ["PRETRAINED_MODEL_PATH"] = str(pretrained_policy_path)
 
 # RL finetune checkpoint directory (same as in 5_Fine.bak)
 # Default tries workspace-relative path first for container compatibility
-default_checkpoint_dir = "/ws/Scripts/rl_finetune" if os.path.exists("/ws/Scripts") else "~/ur5_push_T-main/Scripts/rl_finetune"
+default_checkpoint_dir = "/ws/Scripts/rl_finetune" if os.path.exists("/ws/Scripts") else "~/ur5_nova/Scripts/rl_finetune"
 checkpoint_dir = Path(os.getenv("RL_FINETUNE_DIR", default_checkpoint_dir)).expanduser()
 checkpoint_dir.mkdir(parents=True, exist_ok=True)
 LATEST_CKPT_NAME = "last_checkpoint.pt"
@@ -577,7 +577,7 @@ def _run_repair_index_script(dataset_path: str):
             pass
         # common absolute fallbacks
         candidates.append(Path('/ws/lerobot_related/repair_index.py'))
-        candidates.append(Path(os.path.expanduser('~/ur5_push_T-main/lerobot_related/repair_index.py')))
+        candidates.append(Path(os.path.expanduser('~/ur5_nova/lerobot_related/repair_index.py')))
         script_path = None
         for p in candidates:
             if p.exists():
@@ -609,7 +609,7 @@ class Action_Publisher(Node):
         self.declare_parameter('floor_warmup_steps', 30)
         self.declare_parameter('diagnostics', False)
         # Default output_dir: container-aware (prefers /ws if exists)
-        default_output_dir = "/ws/Scripts/dataset/" if os.path.exists("/ws/Scripts") else os.environ["HOME"] + "/ur5_push_T-main/Scripts/dataset/"
+        default_output_dir = "/ws/Scripts/dataset/" if os.path.exists("/ws/Scripts") else os.environ["HOME"] + "/ur5_nova/Scripts/dataset/"
         self.declare_parameter('output_dir', default_output_dir)
         self.enable_data_collection = os.getenv('ENABLE_DATA_COLLECTION', '1').strip() in ('1', 'true', 'True')
         Hz = int(self.get_parameter('hz').get_parameter_value().integer_value)
@@ -624,7 +624,7 @@ class Action_Publisher(Node):
         self.output_dir = self.get_parameter('output_dir').get_parameter_value().string_value
         
         # Host dataset path for sync (defaults to host workspace location)
-        self.host_dataset_path = os.getenv('HOST_DATASET_PATH', os.path.expanduser('~/ur5_push_T-main/Scripts/dataset/')).rstrip('/')
+        self.host_dataset_path = os.getenv('HOST_DATASET_PATH', os.path.expanduser('~/ur5_nova/Scripts/dataset/')).rstrip('/')
         
         # Sync dataset from host at startup (check existing data and update indices)
         if self.enable_data_collection:
@@ -642,7 +642,7 @@ class Action_Publisher(Node):
         self.control_mode = (self.get_parameter('control_mode').get_parameter_value().string_value or 'joy').strip()
         
         # Image paths: container-aware (prefers /ws if exists)
-        images_dir = "/ws/images" if os.path.exists("/ws/images") else os.environ['HOME'] + "/ur5_push_T-main/images"
+        images_dir = "/ws/images" if os.path.exists("/ws/images") else os.environ['HOME'] + "/ur5_nova/images"
         self.initial_image = cv2.imread(os.path.join(images_dir, "stand_top_plane.png"))
         self.initial_image = cv2.rotate(self.initial_image, cv2.ROTATE_90_COUNTERCLOCKWISE)
         self.pub_img = self.create_publisher(Image, '/pushT_image', 10)

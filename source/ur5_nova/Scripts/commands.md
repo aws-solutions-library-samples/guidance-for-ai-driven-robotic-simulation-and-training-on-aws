@@ -127,7 +127,7 @@ If you encounter NumPy 2.x compatibility issues:
 After successful episodes, data will be saved in:
 
 ```
-~/ur5_push_T-main/Scripts/dataset/
+~/ur5_nova/Scripts/dataset/
 ├── data/
 │   └── chunk-000/
 │       ├── episode_00001.parquet

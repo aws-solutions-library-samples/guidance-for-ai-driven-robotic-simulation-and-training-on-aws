@@ -4,7 +4,7 @@ from os.path import isfile, join
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-mypath = environ['HOME'] + '/ur5_push_T-main_th5/ur5_push_T-main/Scripts/dataset/data/chunk-000'
+mypath = environ['HOME'] + '/ur5_nova/Scripts/dataset/data/chunk-000'
 onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 onlyfiles.sort()
 #print(onlyfiles)
