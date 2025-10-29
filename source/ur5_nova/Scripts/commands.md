@@ -2,14 +2,14 @@
 
 ## 📋 Prerequisites
 
-**The ur5_push_T-main folder must be under the home directory.**
+**The ur5_nova folder must be under the home directory.**
 
 **Isaac Sim Requirements:**
 	- You must use the Python or Env provided by Isaac Sim
-	- You can install the isaacsim python env from here: https://docs.isaacsim.omniverse.nvidia.com/4.5.0/installation/install_python.html
+	- You can install the isaacsim python env from here: https://docs.isaacsim.omniverse.nvidia.com/5.1.0/installation/install_python.html
 	- If you prefer to use the Python in the IsaacSim directory instead of the env, 
 	  you can run it with python.sh -p
-	- NVIDIA Isaac Sim 4.5.0 installed on HOST machine
+	- NVIDIA Isaac Sim 5.1.0 installed on HOST machine
 	- Required Python packages: numpy, opencv-python, torch, lerobot
 
 **Network Setup (For Running on Different Computers):**
@@ -53,8 +53,8 @@ Start Isaac Sim with special parameters on the HOST machine:
 You must use the Python or Env provided by Isaac Sim
 
 ```bash
-cd ~/ur5_push_T-main
-RESET_RECREATE_ROS_NODES=1 RESET_RELOAD_USE_OPEN=1 MINIMAL_TEST=1 ENABLE_ROS=0 ROS_BRIDGE_ENABLE_STRATEGY=pre_stage python ./Scripts/Start_Sim.py
+cd ~/ur5_nova
+RESET_RECREATE_ROS_NODES=1 RESET_RELOAD_USE_OPEN=1 MINIMAL_TEST=1 ENABLE_ROS=0 ROS_BRIDGE_ENABLE_STRATEGY=pre_stage /home/ubuntu/isaacsim/python.sh ./Scripts/Start_Sim.py
 ```
 
 ⏳ **Wait for Isaac Sim to fully load before proceeding to the next step.**

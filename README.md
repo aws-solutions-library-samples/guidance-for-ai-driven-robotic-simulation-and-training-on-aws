@@ -299,7 +299,7 @@ cdk bootstrap aws://123456789012/us-east-1
 1. In Isaac Sim, load the UR5 T-bar pushing scene:
    ```bash
    # Navigate to source directory
-   cd /home/ubuntu/guidance-repo/source/ur5_nova
+   cd /home/ubuntu/ur5_nova
    
    # Build ROS workspace
    ./colcon-build.sh
@@ -420,7 +420,7 @@ python3 Scripts/RL_Finetune.py
    - **Resolution**: SSH to instance and manually restart download:
      ```bash
      cd /home/ubuntu/isaacsim
-     wget --continue https://download.isaacsim.omniverse.nvidia.com/isaac-sim-standalone-5.0.0-linux-x86_64.zip
+     wget --continue https://download.isaacsim.omniverse.nvidia.com/isaac-sim-standalone-5.1.0-linux-x86_64.zip
      ```
 
 2. **DCV Connection Issues:**

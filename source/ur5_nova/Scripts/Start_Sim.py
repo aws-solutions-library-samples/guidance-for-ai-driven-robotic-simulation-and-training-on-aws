@@ -11,7 +11,7 @@ It only:
   4. Idles at a target FPS
 
 Environment Variables:
-  SCENE_USD_PATH               Path to USD (default /home/beable/ur5_simulation/pushT.usd)
+  SCENE_USD_PATH               Path to USD (default /home/ubuntu/ur5_nova/pushT.usd)
   HEADLESS=1                   Headless mode
   IDLE_FPS=20                  Idle update rate
   AUTO_ENABLE_ALL_EXTENSIONS=1 Enable all extensions
@@ -26,7 +26,7 @@ from pathlib import Path
 
 #os.environ['HOME'] + "/ur5_push_T-main/pushT.usd"
 
-USD_PATH = os.getenv("SCENE_USD_PATH", os.environ['HOME'] + "/ur5_push_T-main/pushT.usd")
+USD_PATH = os.getenv("SCENE_USD_PATH", os.environ['HOME'] + "/ur5_nova/pushT.usd")
 HEADLESS = os.getenv("HEADLESS", "0").lower() in ("1","true","yes")
 IDLE_FPS = float(os.getenv("IDLE_FPS", "25"))
 AUTO_ENABLE_ALL_EXT = os.getenv("AUTO_ENABLE_ALL_EXTENSIONS","1").lower() in ("1","true","yes")
