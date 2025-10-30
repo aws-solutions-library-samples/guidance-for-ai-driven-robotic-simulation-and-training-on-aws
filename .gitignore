@@ -1,5 +1,5 @@
 # Large model files
-*.safetensors
+# *.safetensors
 *.pt
 *.zip
 *.mp4

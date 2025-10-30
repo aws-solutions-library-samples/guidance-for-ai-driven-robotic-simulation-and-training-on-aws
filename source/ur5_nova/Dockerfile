@@ -35,11 +35,11 @@ COPY constraints.txt /tmp/constraints.txt
 
 # Python deps not available via apt on base image
 RUN pip3 install --no-cache-dir -c /tmp/constraints.txt "numpy<2.0,>=1.21.0" && \
-    pip3 install --no-cache-dir --no-deps pyarrow scipy requests imageio || true && \
+    pip3 install --no-cache-dir -c /tmp/constraints.txt urllib3 certifi idna pyarrow scipy requests imageio || true && \
     pip3 install --no-cache-dir --no-deps usd-core || true && \
     pip3 install --no-cache-dir -c /tmp/constraints.txt --upgrade-strategy only-if-needed \
       --index-url https://download.pytorch.org/whl/cu121 \
-      torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 && \
+      torch torchvision torchaudio  && \
     pip3 install --no-cache-dir -c /tmp/constraints.txt --upgrade-strategy only-if-needed lerobot || true && \
     pip3 install --no-cache-dir --force-reinstall "numpy<2.0,>=1.21.0" && \
     python3 -c "import numpy; print(f'NumPy {numpy.__version__} installed')" && \
