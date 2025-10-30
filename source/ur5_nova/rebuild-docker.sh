@@ -53,7 +53,7 @@ if [ $? -eq 0 ]; then
     echo -e "${BLUE}🔍 Verifying RL_Finetune dependencies...${NC}"
     TORCH_VERSION=$(docker run --rm ur5_push_t:humble-fixed python3 -c "import torch; print(getattr(torch, '__version__', 'missing'))" || echo "missing")
     CV_VERSION=$(docker run --rm ur5_push_t:humble-fixed python3 -c "import cv2; print(getattr(cv2, '__version__', 'missing'))" || echo "missing")
-    LEROBOT_OK=$(docker run --rm ur5_push_t:humble-fixed python3 -c "import importlib; print('OK' if importlib.util.find_spec('lerobot') else 'MISSING')" || echo "MISSING")
+    LEROBOT_OK=$(docker run --rm ur5_push_t:humble-fixed python3 -c "from importlib import util; print('OK' if util.find_spec('lerobot') else 'MISSING')" || echo "MISSING")
     PXR_OK=$(docker run --rm ur5_push_t:humble-fixed python3 -c "from pxr import Usd; print('OK')" || echo "MISSING")
     PXR_IMPORT_OK=$(docker run --rm ur5_push_t:humble-fixed python3 -c "from importlib import util; import sys; print('OK' if util.find_spec('pxr') else 'MISSING')" || echo "MISSING")
     SCIPY_VERSION=$(docker run --rm ur5_push_t:humble-fixed python3 -c "import scipy; print(getattr(scipy, '__version__', 'missing'))" || echo "missing")
