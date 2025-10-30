@@ -1,10 +1,13 @@
 import pandas as pd
 from os import listdir, environ
-from os.path import isfile, join
+from os.path import isfile, join,exists
 import pyarrow as pa
 import pyarrow.parquet as pq
 
 mypath = environ['HOME'] + '/ur5_nova/Scripts/dataset/data/chunk-000'
+if not exists("/ws"):
+    mypath = "/ws/Scripts/dataset/data/chunk-000"
+
 onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 onlyfiles.sort()
 #print(onlyfiles)
