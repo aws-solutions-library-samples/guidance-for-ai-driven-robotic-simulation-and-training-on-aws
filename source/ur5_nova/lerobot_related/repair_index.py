@@ -5,8 +5,9 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 mypath = environ['HOME'] + '/ur5_nova/Scripts/dataset/data/chunk-000'
-if not exists("/ws"):
-    mypath = "/ws/Scripts/dataset/data/chunk-000"
+docker_ws_path = "/ws/Scripts/dataset/data/chunk-000"
+if exists(docker_ws_path):
+    mypath = docker_ws_path
 
 onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 onlyfiles.sort()

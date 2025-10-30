@@ -121,7 +121,7 @@ if [ "$(cat /var/lib/cloud/instance/installation_phase)" == "Phase 1" ]; then
     DEBIAN_FRONTEND=noninteractive apt install mesa-utils unzip curl gnupg lsb-release -y
     
     # Install ROS 2
-    install_ros
+    # install_ros
     
     # Configure NVIDIA
     nvidia-xconfig --preserve-busid --enable-all-gpus

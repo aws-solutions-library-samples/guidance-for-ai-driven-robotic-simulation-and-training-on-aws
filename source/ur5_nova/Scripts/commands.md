@@ -54,6 +54,9 @@ You must use the Python or Env provided by Isaac Sim
 
 ```bash
 cd ~/ur5_nova
+export ROS_DISTRO=humble
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/ubuntu/isaacsim/exts/isaacsim.ros2.bridge/humble/lib
 RESET_RECREATE_ROS_NODES=1 RESET_RELOAD_USE_OPEN=1 MINIMAL_TEST=1 ENABLE_ROS=0 ROS_BRIDGE_ENABLE_STRATEGY=pre_stage /home/ubuntu/isaacsim/python.sh ./Scripts/Start_Sim.py
 ```
 
