@@ -57,27 +57,33 @@ The deployment creates four nested stacks:
 
 ```bash
 # Basic deployment
-./deploy-nested-stackset.sh robotics-training dev "us-east-1" "g4dn.xlarge" "MyKeyPair"
+./deploy-nested-stackset.sh --project robotics-training --environment dev
 
-# Custom parameters
-./deploy-nested-stackset.sh myproject prod "us-west-2" "g4dn.2xlarge" "MySSHKey"
+# With SSH key
+./deploy-nested-stackset.sh -p myproject -e prod -r us-west-2 -i g4dn.2xlarge -k MySSHKey
+
+# Show help
+./deploy-nested-stackset.sh --help
 ```
 
 ## Parameters
 
-### Script Parameters (Positional)
+### Script Parameters (Named Arguments)
 ```bash
-./deploy-nested-stackset.sh [PROJECT_NAME] [ENVIRONMENT] [REGION] [INSTANCE_TYPE] [SSH_KEY] [ALLOWED_CIDRS]
+./deploy-nested-stackset.sh [OPTIONS]
 ```
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| PROJECT_NAME | robotics-training | Project identifier for resource naming |
-| ENVIRONMENT | dev | Environment name (dev/staging/prod) |
-| REGION | us-east-1 | AWS region for deployment |
-| INSTANCE_TYPE | g4dn.xlarge | EC2 instance type |
-| SSH_KEY | "" | SSH key pair name (optional) |
-| ALLOWED_CIDRS | IP | Comma-separated CIDR blocks for SSH/DCV access |
+| Flag | Short | Default | Description |
+|------|-------|---------|-------------|
+| --project | -p | robotics-training | Project identifier |
+| --environment | -e | dev | Environment (dev/staging/prod) |
+| --region | -r | us-east-1 | AWS region |
+| --instance-type | -i | g4dn.xlarge | EC2 instance type |
+| --key-name | -k | "" | SSH key pair name |
+| --allowed-cidrs | -c | Your IP/32 | Comma-separated CIDR blocks |
+| --volume-size | -v | 150 | Root volume size in GB |
+| --vpc-cidr | | 10.0.0.0/16 | VPC CIDR block |
+| --help | -h | | Show help message |
 
 ### CDK Context Parameters
 
@@ -101,7 +107,7 @@ cdk deploy \
 | keyName | string | undefined | SSH key pair name |
 | rootVolumeSize | number | 100 | Root volume size in GB |
 | vpcCidr | string | 10.0.0.0/16 | VPC CIDR block |
-| allowedCidrBlocks | array | ["0.0.0.0/0"] | CIDR blocks allowed for SSH/DCV access |
+| allowedCidrBlocks | array | ["Your IP/32"] | CIDR blocks allowed for SSH/DCV access |
 
 ## Instance Types & Costs
 
@@ -127,18 +133,21 @@ cdk deploy \
 
 ### Development Environment
 ```bash
-# Open access (default)
-./deploy-nested-stackset.sh robotics-dev dev "us-east-1" "g4dn.xlarge" "dev-keypair"
+# Basic deployment
+./deploy-nested-stackset.sh --project robotics-dev --environment dev
+
+# With SSH key
+./deploy-nested-stackset.sh -p robotics-dev -e dev -k dev-keypair
 
 # Restrict to your IP only
 MY_IP=$(curl -s https://checkip.amazonaws.com)
-./deploy-nested-stackset.sh robotics-dev dev "us-east-1" "g4dn.xlarge" "dev-keypair" "$MY_IP/32"
+./deploy-nested-stackset.sh -p robotics-dev -e dev -c "$MY_IP/32" -k dev-keypair
 
 # Multiple CIDR blocks
-./deploy-nested-stackset.sh robotics-dev dev "us-east-1" "g4dn.xlarge" "dev-keypair" "203.0.113.0/24,198.51.100.0/24"
+./deploy-nested-stackset.sh --project robotics-dev --allowed-cidrs "203.0.113.0/24,198.51.100.0/24"
 
 # Custom volume size (250GB)
-./deploy-nested-stackset.sh robotics-dev dev "us-east-1" "g4dn.xlarge" "dev-keypair" "0.0.0.0/0" "250"
+./deploy-nested-stackset.sh -p robotics-dev -v 250 -i g4dn.2xlarge
 ```
 
 ### Production Environment with Custom Settings
@@ -156,10 +165,10 @@ cdk deploy \
 ### Multi-Region Deployment
 ```bash
 # Deploy to us-west-2
-./deploy-nested-stackset.sh robotics-west dev "us-west-2" "g4dn.2xlarge" "west-keypair"
+./deploy-nested-stackset.sh --project robotics-west --region us-west-2 -i g4dn.2xlarge -k west-keypair
 
 # Deploy to eu-west-1
-./deploy-nested-stackset.sh robotics-eu dev "eu-west-1" "g4dn.xlarge" "eu-keypair"
+./deploy-nested-stackset.sh -p robotics-eu -r eu-west-1 -k eu-keypair
 ```
 
 ## Post-Deployment
@@ -211,20 +220,19 @@ cd /home/ubuntu/isaacsim
 ### S3 Bucket Usage
 ```bash
 # Get bucket name from stack outputs
-BUCKET_NAME=$(aws cloudformation describe-stacks \
+S3_BUCKET_NAME=$(aws cloudformation describe-stacks \
   --stack-name robotics-training-dev-stack \
-  --query 'Stacks[0].Outputs[?OutputKey==`S3BucketName`].OutputValue' \
+  --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" \
   --output text)
 
 # Upload source files to S3
-aws s3 cp ../../source/ur5_nova s3://$BUCKET_NAME/ur5_nova
+aws s3 sync ../../source/ur5_nova s3://$S3_BUCKET_NAME/source/ur5_nova
 
 # List bucket contents
-aws s3 ls s3://$BUCKET_NAME/
+aws s3 ls s3://$S3_BUCKET_NAME/
 
-# download sorce files from s3
-aws s3 sync s3://$BUCKET_NAME/ur5_nova /home/ubuntu/ur5_nova
-
+# Download source files from S3 (on EC2 instance)
+aws s3 sync s3://$S3_BUCKET_NAME/source/ur5_nova /home/ubuntu/ur5_nova
 ```
 
 ### EKS Cluster Usage

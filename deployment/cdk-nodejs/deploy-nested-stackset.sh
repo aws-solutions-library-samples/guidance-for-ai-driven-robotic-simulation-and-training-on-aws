@@ -1,36 +1,92 @@
 #!/bin/bash
 
-# Deploy Single StackSet with Nested Child Stacks
+# Deploy Robotics Training Infrastructure with Named Arguments
 
 set -e
 
-MY_IP=$(curl -s https://checkip.amazonaws.com)
-PROJECT_NAME=${1:-"robotics-training"}
-ENVIRONMENT=${2:-"dev"}
-TARGET_REGIONS=${3:-"us-east-1"}
-INSTANCE_TYPE=${4:-"g4dn.2xlarge"}
-KEY_NAME=${5:-""}
-ALLOWED_CIDRS=${6:-"$MY_IP/32"}
-ROOT_VOLUME_SIZE=${7:-"250"}
+# Default values
+PROJECT_NAME="robotics-training"
+ENVIRONMENT="dev"
+TARGET_REGIONS="us-east-1"
+INSTANCE_TYPE="g4dn.xlarge"
+KEY_NAME=""
+ALLOWED_CIDRS="$(curl -s https://checkip.amazonaws.com)/32"
+ROOT_VOLUME_SIZE="150"
+VPC_CIDR="10.0.0.0/16"
 
-echo "=== Deploying Nested StackSet ==="
+# Parse named arguments
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -p|--project)
+      PROJECT_NAME="$2"
+      shift 2
+      ;;
+    -e|--environment)
+      ENVIRONMENT="$2"
+      shift 2
+      ;;
+    -r|--region)
+      TARGET_REGIONS="$2"
+      shift 2
+      ;;
+    -i|--instance-type)
+      INSTANCE_TYPE="$2"
+      shift 2
+      ;;
+    -k|--key-name)
+      KEY_NAME="$2"
+      shift 2
+      ;;
+    -c|--allowed-cidrs)
+      ALLOWED_CIDRS="$2"
+      shift 2
+      ;;
+    -v|--volume-size)
+      ROOT_VOLUME_SIZE="$2"
+      shift 2
+      ;;
+    --vpc-cidr)
+      VPC_CIDR="$2"
+      shift 2
+      ;;
+    -h|--help)
+      echo "Usage: $0 [OPTIONS]"
+      echo ""
+      echo "Options:"
+      echo "  -p, --project NAME          Project name (default: robotics-training)"
+      echo "  -e, --environment ENV       Environment (default: dev)"
+      echo "  -r, --region REGION         AWS region (default: us-east-1)"
+      echo "  -i, --instance-type TYPE    EC2 instance type (default: g4dn.xlarge)"
+      echo "  -k, --key-name KEY          SSH key pair name (optional)"
+      echo "  -c, --allowed-cidrs CIDRS   Comma-separated CIDR blocks (default: your IP/32)"
+      echo "  -v, --volume-size SIZE      Root volume size in GB (default: 150)"
+      echo "  --vpc-cidr CIDR             VPC CIDR block (default: 10.0.0.0/16)"
+      echo "  -h, --help                  Show this help message"
+      echo ""
+      echo "Examples:"
+      echo "  $0 --project my-robotics --environment prod --region us-west-2"
+      echo "  $0 -p robotics-dev -e dev -i g4dn.2xlarge -k my-keypair"
+      echo "  $0 --allowed-cidrs 203.0.113.0/24,198.51.100.0/24 --volume-size 250"
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: $1"
+      echo "Use --help for usage information"
+      exit 1
+      ;;
+  esac
+done
+
+echo "=== Deploying Robotics Training Infrastructure ==="
 echo "Project: $PROJECT_NAME"
 echo "Environment: $ENVIRONMENT"
-echo "Target Regions: $TARGET_REGIONS"
+echo "Region: $TARGET_REGIONS"
 echo "Instance Type: $INSTANCE_TYPE"
-echo "SSH Key: ${KEY_NAME:-"None"}"
+echo "SSH Key: ${KEY_NAME:-None}"
 echo "Allowed CIDRs: $ALLOWED_CIDRS"
 echo "Root Volume Size: ${ROOT_VOLUME_SIZE}GB"
-
-# Convert comma-separated regions to JSON array
-REGIONS_ARRAY=$(echo "$TARGET_REGIONS" | sed 's/,/","/g' | sed 's/^/["/' | sed 's/$/"]/')
-
-# Build context parameters
-CONTEXT_PARAMS="--context projectName=$PROJECT_NAME --context environment=$ENVIRONMENT --context targetRegions=$REGIONS_ARRAY"
-
-if [ -n "$KEY_NAME" ]; then
-    CONTEXT_PARAMS="$CONTEXT_PARAMS --context keyName=$KEY_NAME"
-fi
+echo "VPC CIDR: $VPC_CIDR"
+echo ""
 
 # Install dependencies and build
 echo "Installing dependencies..."
@@ -45,10 +101,6 @@ for region in "${REGION_ARRAY[@]}"; do
     cdk bootstrap aws://$(aws sts get-caller-identity --query Account --output text)/$region || true
 done
 
-# Get account ID for S3 bucket naming
-ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-CONTEXT_PARAMS="$CONTEXT_PARAMS --context accountId=$ACCOUNT_ID"
-
 # Convert comma-separated CIDRs to JSON array
 CIDRS_ARRAY=$(echo "$ALLOWED_CIDRS" | sed 's/,/","/g' | sed 's/^/["/' | sed 's/$/"]/')
 
@@ -60,27 +112,29 @@ cdk deploy \
   --context instanceType="$INSTANCE_TYPE" \
   --context keyName="$KEY_NAME" \
   --context rootVolumeSize=$ROOT_VOLUME_SIZE \
+  --context vpcCidr="$VPC_CIDR" \
   --context allowedCidrBlocks="$CIDRS_ARRAY" \
   --require-approval never
 
-
-  # Capture in bash variable
+# Upload source files to S3
+echo ""
+echo "Uploading source files to S3..."
 S3_BUCKET_NAME=$(aws cloudformation describe-stacks \
-  --stack-name $PROJECT_NAME-$ENVIRONMENT-stack  \
+  --stack-name $PROJECT_NAME-$ENVIRONMENT-stack \
   --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" \
   --output text)
-aws s3 sync ../../source/ur5_nova s3://$S3_BUCKET_NAME/source/ur5_nova
 
-
-# Use the variable
-# aws s3 sync ../source/ur5_nova s3://$S3_BUCKET_NAME/
+if [ -d "../../source/ur5_nova" ]; then
+  aws s3 sync ../../source/ur5_nova s3://$S3_BUCKET_NAME/source/ur5_nova
+  echo "Source files uploaded to s3://$S3_BUCKET_NAME/source/ur5_nova"
+else
+  echo "Source directory not found, skipping upload"
+fi
 
 echo ""
 echo "=== Deployment Complete ==="
 echo "Stack Name: $PROJECT_NAME-$ENVIRONMENT-stack"
-echo "Instance Type: $INSTANCE_TYPE"
-echo "SSH Key: $KEY_NAME"
-echo "Bucket Name: $S3_BUCKET_NAME"
+echo "S3 Bucket: $S3_BUCKET_NAME"
 echo ""
 echo "Get instance details:"
 echo "aws cloudformation describe-stacks --stack-name $PROJECT_NAME-$ENVIRONMENT-stack --query 'Stacks[0].Outputs'"
