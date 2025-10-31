@@ -40,7 +40,21 @@ RUN pip3 install --no-cache-dir -c /tmp/constraints.txt "numpy<2.0,>=1.21.0" && 
     pip3 install --no-cache-dir -c /tmp/constraints.txt --upgrade-strategy only-if-needed \
       --index-url https://download.pytorch.org/whl/cu121 \
       torch torchvision torchaudio && \
-    pip3 install --no-cache-dir -c /tmp/constraints.txt --upgrade-strategy only-if-needed lerobot==0.3.3 || true && \
+    pip3 install --no-cache-dir -c /tmp/constraints.txt --upgrade-strategy only-if-needed lerobot==0.3.3 \ 
+        nvidia-cublas-cu12==12.6.4.1 \
+        nvidia-cuda-cupti-cu12==12.6.80 \
+        nvidia-cuda-nvrtc-cu12==12.6.77 \
+        nvidia-cuda-runtime-cu12==12.6.77 \
+        nvidia-cudnn-cu12==9.5.1.17 \
+        nvidia-cufft-cu12==11.3.0.4 \
+        nvidia-cufile-cu12==1.11.1.6 \
+        nvidia-curand-cu12==10.3.7.77 \
+        nvidia-cusolver-cu12==11.7.1.2 \
+        nvidia-cusparse-cu12==12.5.4.2 \
+        nvidia-cusparselt-cu12==0.6.3 \
+        nvidia-nccl-cu12==2.26.2 \
+        nvidia-nvjitlink-cu12==12.6.85 \
+        nvidia-nvtx-cu12==12.6.77|| true && \
     pip3 install --no-cache-dir --force-reinstall "numpy<2.0,>=1.21.0" && \
     python3 -c "import numpy; print(f'NumPy {numpy.__version__} installed')" && \
     rm /tmp/constraints.txt
