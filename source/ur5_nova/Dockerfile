@@ -40,7 +40,7 @@ RUN pip3 install --no-cache-dir -c /tmp/constraints.txt "numpy<2.0,>=1.21.0" && 
     pip3 install --no-cache-dir -c /tmp/constraints.txt --upgrade-strategy only-if-needed \
       --index-url https://download.pytorch.org/whl/cu121 \
       torch torchvision torchaudio && \
-    pip3 install --no-cache-dir -c /tmp/constraints.txt --upgrade-strategy only-if-needed lerobot || true && \
+    pip3 install --no-cache-dir -c /tmp/constraints.txt --upgrade-strategy only-if-needed lerobot==0.3.3 || true && \
     pip3 install --no-cache-dir --force-reinstall "numpy<2.0,>=1.21.0" && \
     python3 -c "import numpy; print(f'NumPy {numpy.__version__} installed')" && \
     rm /tmp/constraints.txt
