@@ -210,9 +210,7 @@ cdk bootstrap aws://123456789012/us-east-1
    ```
 
 7. Deploy the infrastructure stack:
-   ```bash
-   cdk deploy --all
-   ```
+   ![Follow steps mentioned in this doc](./deployment/cdk-nodejs/README.md)
 
 8. Capture the deployed resources:
    ```bash
@@ -287,38 +285,8 @@ cdk bootstrap aws://123456789012/us-east-1
    aws secretsmanager get-secret-value --secret-id <SECRET_NAME> --query SecretString --output text
    ```
 
-**Step 2: Start Isaac Sim**
-1. Open terminal in DCV session
-2. Navigate to Isaac Sim directory:
-   ```bash
-   cd /home/ubuntu/isaacsim
-   ./isaac-sim.sh
-   ```
-
-**Step 3: Load Robot Training Environment**
-1. In Isaac Sim, load the UR5 T-bar pushing scene:
-   ```bash
-   # Navigate to source directory
-   cd /home/ubuntu/ur5_nova
-   
-   # Build ROS workspace
-   ./colcon-build.sh
-   
-   # Source the workspace
-   source install/setup.bash
-   ```
-
-**Step 4: Run Data Collection**
-```bash
-# Start data collection with pretrained model
-python3 Scripts/data_collection_model_Nova.py
-```
-
-**Step 5: Run Reinforcement Learning Fine-tuning**
-```bash
-# Start RL fine-tuning process
-python3 Scripts/RL_Finetune.py
-```
+**Step 2: Start Simulation and Data collection**
+![Follow steps mentioned in this doc](./source/ur5_nova/Scripts/commands.md)
 
 **Iterative Training Approach:**
 1. **Initial Training**: Run RL fine-tune for 30 minutes
