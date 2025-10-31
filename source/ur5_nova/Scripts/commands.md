@@ -27,6 +27,7 @@ Build the ROS2 Docker container:
 
 **Step 1: Build Docker Image**
 ```bash
+cd ~/ur5_nova
 ./rebuild-docker.sh
 ```
 
@@ -38,6 +39,7 @@ Build the ROS2 packages inside the Docker container:
 
 ```bash
 ./run.sh
+cd ~/ur5_nova
 # → Select option 8: 🔨 Colcon Build
 ```
 
@@ -71,6 +73,7 @@ RESET_RECREATE_ROS_NODES=1 RESET_RELOAD_USE_OPEN=1 MINIMAL_TEST=1 ENABLE_ROS=0 R
 Once Isaac Sim is running, start the MoveIt Servo controller:
 
 ```bash
+cd ~/ur5_nova
 ./run.sh
 # → Select option 2: 🤖 Start ROS2 MoveIt Servo
 ```
@@ -82,6 +85,7 @@ Once Isaac Sim is running, start the MoveIt Servo controller:
 After both Isaac Sim and MoveIt Servo are running, start the data collection:
 
 ```bash
+cd ~/ur5_nova
 ./run.sh
 # → Select option 3: 📊 Run Data Collection
 ```

@@ -56,6 +56,11 @@ The deployment creates four nested stacks:
 ## Quick Start
 
 ```bash
+# Navigate to cdk-nodejs folder
+cd deployment/cdk-nodejs
+```
+
+```bash
 # Basic deployment
 ./deploy-nested-stackset.sh --project robotics-training --environment dev
 

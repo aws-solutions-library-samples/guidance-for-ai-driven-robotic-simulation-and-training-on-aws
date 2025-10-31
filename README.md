@@ -210,7 +210,8 @@ cdk bootstrap aws://123456789012/us-east-1
    ```
 
 7. Deploy the infrastructure stack:
-   ![Follow steps mentioned in this doc](./deployment/cdk-nodejs/README.md)
+
+   [Follow steps mentioned in this doc](./deployment/cdk-nodejs/README.md)
 
 8. Capture the deployed resources:
    ```bash
@@ -286,7 +287,8 @@ cdk bootstrap aws://123456789012/us-east-1
    ```
 
 **Step 2: Start Simulation and Data collection**
-![Follow steps mentioned in this doc](./source/ur5_nova/Scripts/commands.md)
+
+[Follow the commands](./source/ur5_nova/Scripts/commands.md)
 
 **Iterative Training Approach:**
 1. **Initial Training**: Run RL fine-tune for 30 minutes
