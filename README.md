@@ -179,8 +179,11 @@ cdk bootstrap aws://123456789012/us-east-1
 
 ## Deployment Steps 
 
+
 1. Clone the repository using command:
    ```bash
+   # Make sure git-lfs is installed (https://git-lfs.com)
+   git lfs install
    git clone https://github.com/aws-solutions-library-samples/guidance-for-using-bedrock-fm-and-aws-trainium-to-build-ai-assisted-robot-training.git
    ```
 
