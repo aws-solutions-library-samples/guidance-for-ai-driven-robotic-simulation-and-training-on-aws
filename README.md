@@ -184,12 +184,12 @@ cdk bootstrap aws://123456789012/us-east-1
    ```bash
    # Make sure git-lfs is installed (https://git-lfs.com)
    git lfs install
-   git clone https://github.com/aws-solutions-library-samples/guidance-for-using-bedrock-fm-and-aws-trainium-to-build-ai-assisted-robot-training.git
+   git clone https://github.com/aws-solutions-library-samples/guidance-for-ai-driven-robotic-simulation-and-training-on-aws.git
    ```
 
 2. Navigate to the repository folder:
    ```bash
-   cd guidance-for-using-bedrock-fm-and-aws-trainium-to-build-ai-assisted-robot-training
+   cd guidance-for-ai-driven-robotic-simulation-and-training-on-aws
    ```
 
 3. Navigate to the CDK deployment directory:
