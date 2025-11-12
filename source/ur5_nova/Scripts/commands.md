@@ -87,7 +87,7 @@ After both Isaac Sim and MoveIt Servo are running, start the data collection:
 ```bash
 cd ~/ur5_nova
 ./run.sh
-# → Select option 3: 📊 Run Data Collection
+# → Select option 3: 📊 Run Data Collection. You can also run data_collection_model_Nova.py where the Nova pro model acts as an observer and gives feedback on the process.
 ```
 
 ---
