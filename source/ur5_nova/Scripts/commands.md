@@ -191,6 +191,10 @@ rm -rf build/ install/ log/
 # → Option 8: Colcon Build
 ```
 
+### copy training_data to s3 bucket
+```bash
+aws s3 sync /home/ubuntu/training_data/ s3://<bucket_name/training_data/
+```
 ---
 
 ## 📚 Additional Documentation

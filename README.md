@@ -305,6 +305,39 @@ cdk bootstrap aws://123456789012/us-east-1
 - Success rate and accuracy displayed in real-time
 - Nova Pro provides intelligent observations of robot behavior
 
+**Step 3: Run the training script in AWS Trainium instance***
+
+Login into the EC2 Trainium instance  and follow the commands train the model using AWS Neuron
+
+- copy the leRobot dataset generated into Trainium instance
+
+```bash
+aws s3 sync s3://<bucket-name>/training_data /home/ubuntu/training_data
+```
+
+- install ffmpeg required for leRobot video dataset decoding
+
+```bash
+sudo apt install ffmpeg -y
+```
+- copy the file source/ur5_nova/lerobot_related/train_policy_cpu.py to EC2 Trainium instance at /home/ubuntu/ 
+- In EC2 Trainium instance Set up the virtual environment for creating the model from the Lerobot dataset generated and then execute the script copied above
+
+```bash
+python3 -m venv lerobotEnv
+source lerobotEnv/bin/activate
+pip install pip -U
+python -m pip config set global.extra-index-url https://pip.repos.neuron.amazonaws.com
+pip install --upgrade neuronx-cc==2.* torch-neuronx==2.8.* torchvision torchcodec==0.7.0 lerobot
+python train_policy_cpu.py
+```
+
+- Above will create a safetensors file (model.safetensors) and config.json at outputs/train/my_pusht_diffusion/<datetime/ (folder name looks like: outputs/train/my_pusht_diffusion/20251128214107)
+
+
+
+
+
 ## Next Steps
 
 **Customization and Enhancement Options:**
