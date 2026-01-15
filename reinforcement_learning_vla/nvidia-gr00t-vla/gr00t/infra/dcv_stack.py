@@ -13,7 +13,8 @@ class DcvStack(Stack):
         efs_id: str = None,
         efs_sg_id: str = None,
         batch_stack=None,
-        **kwargs,
+        description="The CDK stack for the DCV resources used by the GR00T fine-tuning workflow. AWS Solutions ID: SO9621"
+        ** kwargs,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 

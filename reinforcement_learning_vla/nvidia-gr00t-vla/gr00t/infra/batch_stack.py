@@ -28,7 +28,8 @@ class BatchStack(Stack):
         ecr_image_uri: str = None,
         dataset_bucket: str = None,
         s3_upload_uri: str = None,
-        **kwargs,
+        description="The CDK stack for the AWS Batch resources used by the GR00T fine-tuning workflow. AWS Solutions ID: SO9621"
+        ** kwargs,
     ) -> None:
         """
         CDK stack for the AWS Batch resources used by the GR00T fine-tuning workflow.
