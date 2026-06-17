@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@aws-cdk/lambda-layer-kubectl-v33": "^2.0.0",
-    "aws-cdk-lib": "2.219.0",
+    "aws-cdk-lib": "2.246.0",
     "constructs": "^10.4.2"
   },
   "keywords": [
