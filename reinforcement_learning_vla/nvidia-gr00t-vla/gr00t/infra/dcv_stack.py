@@ -13,10 +13,10 @@ class DcvStack(Stack):
         efs_id: str = None,
         efs_sg_id: str = None,
         batch_stack=None,
-        description="The CDK stack for the DCV resources used by the GR00T fine-tuning workflow. AWS Solutions ID: SO9621"
-        ** kwargs,
+        description="The CDK stack for the DCV resources used by the GR00T fine-tuning workflow. AWS Solutions ID: SO9621",
+        **kwargs,
     ) -> None:
-        super().__init__(scope, construct_id, **kwargs)
+        super().__init__(scope, construct_id, description=description, **kwargs)
 
         # Resolve VPC - either use provided VPC, lookup by ID, or get from batch stack
         # The VPC must be in the same region as the stack and contain a public subnet

@@ -106,11 +106,17 @@ CIDRS_ARRAY=$(echo "$ALLOWED_CIDRS" | sed 's/,/","/g' | sed 's/^/["/' | sed 's/$
 
 # Deploy nested stacks
 echo "Deploying nested stacks..."
+KEY_NAME_CONTEXT=()
+if [ -n "$KEY_NAME" ]; then
+  KEY_NAME_CONTEXT=(--context keyName="$KEY_NAME")
+fi
+
 cdk deploy \
   --context projectName="$PROJECT_NAME" \
   --context environment="$ENVIRONMENT" \
+  --context region="${REGION_ARRAY[0]}" \
   --context instanceType="$INSTANCE_TYPE" \
-  --context keyName="$KEY_NAME" \
+  "${KEY_NAME_CONTEXT[@]}" \
   --context rootVolumeSize=$ROOT_VOLUME_SIZE \
   --context vpcCidr="$VPC_CIDR" \
   --context allowedCidrBlocks="$CIDRS_ARRAY" \

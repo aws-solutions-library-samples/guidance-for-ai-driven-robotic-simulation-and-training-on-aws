@@ -87,6 +87,14 @@ export class IamSecretsStack extends cdk.NestedStack {
     this.secret.grantRead(this.role);
     this.bucket.grantReadWrite(this.role);
 
+    // Amazon DCV verifies its EC2 license by reading the regional
+    // dcv-license bucket; without this the server runs in trial mode
+    // and stops accepting connections when the trial expires.
+    this.role.addToPolicy(new iam.PolicyStatement({
+      actions: ['s3:GetObject'],
+      resources: [`arn:aws:s3:::dcv-license.${cdk.Aws.REGION}/*`]
+    }));
+
     this.instanceProfile = new iam.CfnInstanceProfile(this, 'InstanceProfile', {
       instanceProfileName: `${props.projectName}-${props.environment}-ec2-profile`,
       roles: [this.role.roleName]
