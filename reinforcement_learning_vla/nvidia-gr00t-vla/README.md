@@ -259,10 +259,10 @@ Deploy both stacks automatically with [CDK](https://aws.amazon.com/cdk/). Works 
     aws cloudformation describe-stacks --stack-name IsaacGr00tBatchStack --query 'Stacks[0].Outputs[?OutputKey==`JobQueueName`].OutputValue' --output text
 
     # Get DCV instance public IP
-    aws cloudformation describe-stacks --stack-name IsaacLabDcvStack --query 'Stacks[0].Outputs[?OutputKey==`DcvInstancePublicIp`].OutputValue' --output text
+    aws cloudformation describe-stacks --stack-name IsaacLabDcvStack --query 'Stacks[0].Outputs[?OutputKey==`InstancePublicIP`].OutputValue' --output text
 
     # Get EFS file system ID
-    aws cloudformation describe-stacks --stack-name IsaacGr00tBatchStack --query 'Stacks[0].Outputs[?OutputKey==`EfsFileSystemId`].OutputValue' --output text
+    aws cloudformation describe-stacks --stack-name IsaacGr00tBatchStack --query 'Stacks[0].Outputs[?OutputKey==`EFSFileSystemId`].OutputValue' --output text
     ```
 
 ### Deployment Path 2: Using Existing AWS Resources
@@ -405,7 +405,7 @@ Before deploying, ensure you have:
 4. **EFS File System:**
 
    ```bash
-   aws efs describe-file-systems --query 'FileSystems[?Name==`IsaacGr00tEFS`].[FileSystemId,LifeCycleState]' --output table
+   aws efs describe-file-systems --query 'FileSystems[?Name==`BatchEFS`].[FileSystemId,LifeCycleState]' --output table
    ```
 
    Expected: File system should be in `available` state
@@ -413,8 +413,8 @@ Before deploying, ensure you have:
 5. **Container Registry:**
 
    ```bash
-   aws ecr describe-repositories --repository-names isaac-gr00t-training
-   aws ecr describe-images --repository-name isaac-gr00t-training
+   aws ecr describe-repositories --repository-names gr00t-finetune
+   aws ecr describe-images --repository-name gr00t-finetune
    ```
 
    Expected: Repository should exist with pushed container image
@@ -614,7 +614,7 @@ Access the DCV instance to evaluate trained models:
 
    ```bash
    # Delete ECR repository
-   aws ecr delete-repository --repository-name isaac-gr00t-training --force
+   aws ecr delete-repository --repository-name gr00t-finetune --force
    ```
 
 4. **Delete CloudFormation stacks:**

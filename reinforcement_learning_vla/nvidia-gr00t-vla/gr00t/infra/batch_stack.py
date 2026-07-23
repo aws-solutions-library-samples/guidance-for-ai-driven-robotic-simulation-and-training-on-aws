@@ -28,8 +28,8 @@ class BatchStack(Stack):
         ecr_image_uri: str = None,
         dataset_bucket: str = None,
         s3_upload_uri: str = None,
-        description="The CDK stack for the AWS Batch resources used by the GR00T fine-tuning workflow. AWS Solutions ID: SO9621"
-        ** kwargs,
+        description="The CDK stack for the AWS Batch resources used by the GR00T fine-tuning workflow. AWS Solutions ID: SO9621",
+        **kwargs,
     ) -> None:
         """
         CDK stack for the AWS Batch resources used by the GR00T fine-tuning workflow.
@@ -52,7 +52,7 @@ class BatchStack(Stack):
             dataset_bucket: S3 bucket name for dataset read-only access (optional)
             s3_upload_uri: S3 URI for checkpoint uploads (e.g., s3://bucket/path). If not provided, creates a new bucket.
         """
-        super().__init__(scope, construct_id, **kwargs)
+        super().__init__(scope, construct_id, description=description, **kwargs)
 
         # ==============================================================
         # region 2.1 Create VPC and EFS
